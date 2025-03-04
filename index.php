@@ -133,6 +133,55 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-upload info-icon"></i>Upload File</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
+                            $targetDir = "data/";
+                            if (!is_dir($targetDir)) {
+                                mkdir($targetDir, 0777, true);
+                            }
+                            
+                            $targetFile = $targetDir . basename($_FILES["fileToUpload"]["name"]);
+                            $uploadOk = 1;
+                            
+                            // Check if file already exists
+                            if (file_exists($targetFile)) {
+                                echo "<div class='alert alert-warning'><i class='fas fa-exclamation-triangle me-2'></i>File already exists.</div>";
+                                $uploadOk = 0;
+                            }
+                            
+                            // Check file size (5MB max)
+                            if ($_FILES["fileToUpload"]["size"] > 5000000) {
+                                echo "<div class='alert alert-warning'><i class='fas fa-exclamation-triangle me-2'></i>File is too large (max 5MB).</div>";
+                                $uploadOk = 0;
+                            }
+                            
+                            if ($uploadOk == 1) {
+                                if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $targetFile)) {
+                                    echo "<div class='alert alert-success'><i class='fas fa-check-circle me-2'></i>File " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.</div>";
+                                } else {
+                                    echo "<div class='alert alert-danger'><i class='fas fa-times-circle me-2'></i>Error uploading file.</div>";
+                                }
+                            }
+                        }
+                        ?>
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="fileToUpload" class="form-label">Select file to upload:</label>
+                                <input type="file" class="form-control" name="fileToUpload" id="fileToUpload" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>Upload File
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
             <div class="col-md-6">
                 <div class="card">
